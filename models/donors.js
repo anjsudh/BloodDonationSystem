@@ -22,7 +22,7 @@ var schema = new Schema({
     },
     emailAddress : {
         type:String,
-        required:[true, 'Enter Email Address'],
+        required:[true, 'Enter your Email Address'],
         unique:[true, 'This Email Address is already registered'],
         validate: {
             validator: function(v) {
@@ -33,23 +33,27 @@ var schema = new Schema({
     },
     bloodGroup : {
         type:String,
-        required:[true, 'Enter Blood Group']
+        required:[true, 'Enter your Blood Group']
     },
     address : {
         type:String,
-        required:[true, 'Enter Address']
+        required:[true, 'Enter your Address']
     },
     ip : {
         type:String,
-        required:[true, 'Enter IP Address']
+        required:[true, 'Enter your IP Address'],
+        validate: {
+            validator: function(v) {
+                return /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(v);
+            },
+            message: 'Enter valid IP Address'
+        }
     },
     coordinates : {
         type: mongoose.Schema.Types.Point,
-        required:[true, 'Enter Coordinates']
+        required:[true, 'Enter your Coordinates']
     }
 });
 
 schema.plugin(mongooseUniqueValidator)
-schema.plugin(mongooseValidator)
-schema.plugin(GeoJSON)
 module.exports = mongoose.model('Donor', schema);
