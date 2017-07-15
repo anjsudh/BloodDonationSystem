@@ -4,28 +4,36 @@ var Donor = require('../models/donors');
 
 /* Add Donor. */
 router.post('/', function(req, res, next) {
-    console.log(req.body);
-    var donor = new Donor({
-        firstName:req.body.donor.firstName,
-        lastName:req.body.donor.lastName,
-        contactNumber:req.body.donor.contactNumber,
-        emailAddress:req.body.donor.emailAddress,
-        bloodGroup:req.body.donor.bloodGroup,
-        address:req.body.donor.address,
-        ip:req.body.donor.ip,
-        coordinates:req.body.donor.coordinates
-    });
-    donor.save(function(err, result){
-        if(err==null) {
-            res.send({donors:result});
-        } else{
-            res.status(400);
-            res.send({errorCode: 400, errorCause: err.errors});
-        }
-    });
+    try {
+        console.log(req.body);
+        var donor = new Donor({
+            firstName: req.body.donor.firstName,
+            lastName: req.body.donor.lastName,
+            contactNumber: req.body.donor.contactNumber,
+            emailAddress: req.body.donor.emailAddress,
+            bloodGroup: req.body.donor.bloodGroup,
+            //address: req.body.donor.address,
+            ip: req.connection.remoteAddress,
+            coordinates: req.body.donor.coordinates
+        });
+        console.log('blah')
+        donor.save(function (err, result) {
+            if (err == null) {
+                res.send({donors: result});
+            } else {
+                res.status(400);
+                res.send({errorCode: 400, errorCause: err.errors});
+            }
+        });
+    }catch (e){
+        console.log(e)
+        res.status(400);
+        res.send({errorCode: 400, errorCause: e.errors});
+    }
 });
 
 router.get('/', function(req, res, next) {
+    try{
     Donor.find({}, function(err, result){
         if(err==null) {
             res.send({donors:result});
@@ -34,6 +42,10 @@ router.get('/', function(req, res, next) {
             res.send({errorCode: 400, errorCause: err.errors});
         }
     });
+    }catch (e){
+        res.status(400);
+        res.send({errorCode: 400, errorCause: e.errors});
+    }
 });
 
 router.get('/:id', function(req, res, next) {
@@ -49,6 +61,7 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.put('/:id', function(req, res, next) {
+    try{
     console.log(req.body);
     Donor.findOne({_id:req.params.id}, function(err, result){
         if(err==null) {
@@ -68,11 +81,11 @@ router.put('/:id', function(req, res, next) {
             if(req.body.donor.bloodGroup){
                 result.bloodGroup=req.body.donor.bloodGroup
             }
-            if(req.body.donor.address){
+            /*if(req.body.donor.address){
                 result.address=req.body.donor.address
-            }
+            }*/
             if(req.body.donor.ip){
-                result.ip=req.body.donor.ip
+                result.ip=req.connection.remoteAddress;
             }
             if(req.body.donor.coordinates){
                 result.coordinates=req.body.donor.coordinates
@@ -90,9 +103,14 @@ router.put('/:id', function(req, res, next) {
             res.send({errorCode: 404, errorCause: err.errors});
         }
     });
+    }catch (e){
+        res.status(400);
+        res.send({errorCode: 400, errorCause: e.errors});
+    }
 });
 
 router.delete('/:id', function(req, res, next) {
+    try{
     console.log(req.params.id);
     Donor.deleteOne({_id:req.params.id}, function(err, result){
         if(err==null) {
@@ -103,6 +121,10 @@ router.delete('/:id', function(req, res, next) {
             res.send({errorCode: 400, errorCause: err.errors});
         }
     });
+    }catch (e){
+        res.status(400);
+        res.send({errorCode: 400, errorCause: e.errors});
+    }
 });
 
 module.exports = router;

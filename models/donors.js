@@ -35,10 +35,10 @@ var schema = new Schema({
         type:String,
         required:[true, 'Enter your Blood Group']
     },
-    address : {
+   /* address : {
         type:String,
         required:[true, 'Enter your Address']
-    },
+    },*/
     ip : {
         type:String,
         required:[true, 'Enter your IP Address'],
